@@ -1,7 +1,7 @@
 """
 PreActResNet18 for CIFAR-10.
 
-Adapted from BackdoorBench (VinAIResearch/Warping-based_Backdoor_Attack).
+Adapted from BackdoorBench
 Pre-activation ResNet uses BatchNorm before convolutions, with adaptive average pooling.
 """
 import torch
