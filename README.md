@@ -1,5 +1,7 @@
 # MAD via Functional Attribution
 
+This repo provides an implementation for our MAD method + evaluation on BackdoorBench models and datasets.
+
 ## Setup
 
 ```bash
