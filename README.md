@@ -6,7 +6,7 @@
 pip install -r requirements.txt
 ```
 
-1. Download the BackdoorBench attack result (e.g., CIFAR-10 Blended 5%) and unzip it to a folder. (Available at [github](https://github.com/SCLBD/backdoorbench))
+1. Download the BackdoorBench attack result (e.g., CIFAR-10 Blended 5%) and unzip it to a folder. (Available at [this link](https://github.com/SCLBD/backdoorbench))
 2. Run `prepare_data.py` pointing to the unzipped folder:
 
 ```bash
