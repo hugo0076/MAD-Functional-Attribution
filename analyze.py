@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Analyze SGLD loss traces: compute AUROC for aLLC-based backdoor detection.
+Analyze SGLD loss traces: compute AUROC for anomaly detection.
 
 Detection methods:
   - Mean Correlation: average Pearson correlation to all trusted samples
@@ -89,13 +89,13 @@ def compute_class_max_score(matrix, trusted_pred_labels, n_classes=10):
 
 def main():
     parser = argparse.ArgumentParser(
-        description="Analyze SGLD loss traces for backdoor detection")
+        description="Analyze SGLD loss traces for anomaly detection")
     parser.add_argument("--input", type=str, default="loss_traces.npz",
                         help="Path to loss_traces.npz from run_sgld.py")
     parser.add_argument("--burn_in", type=int, default=250,
                         help="Number of initial draws to discard (default: 250)")
     parser.add_argument("--target_class", type=int, default=0,
-                        help="Backdoor target class (default: 0)")
+                        help="Anomalous target class (default: 0)")
     args = parser.parse_args()
 
     # Load data
@@ -105,7 +105,7 @@ def main():
     gt_labels = data["gt_labels"]          # [n_samples]
     trusted_idx = data["trusted_idx"]
     benign_idx = data["benign_idx"]
-    backdoor_idx = data["backdoor_idx"]
+    anomalous_idx = data["anomalous_idx"]
 
     burn_in = args.burn_in
 
@@ -126,8 +126,8 @@ def main():
     benign_correct_mask = benign_preds == benign_gt
     benign_correct_local = np.where(benign_correct_mask)[0]
 
-    # Backdoor: successfully attacked (predicted == target class)
-    bd_preds = predicted_labels[backdoor_idx]
+    # Anomalous: successfully attacked (predicted == target class)
+    bd_preds = predicted_labels[anomalous_idx]
     bd_attacked_mask = bd_preds == args.target_class
     bd_attacked_local = np.where(bd_attacked_mask)[0]
 
@@ -136,7 +136,7 @@ def main():
           f"correctly classified ({100 * trusted_correct_mask.mean():.1f}%)")
     print(f"  Benign:   {benign_correct_mask.sum()} / {len(benign_idx)} "
           f"correctly classified ({100 * benign_correct_mask.mean():.1f}%)")
-    print(f"  Backdoor: {bd_attacked_mask.sum()} / {len(backdoor_idx)} "
+    print(f"  Anomalous: {bd_attacked_mask.sum()} / {len(anomalous_idx)} "
           f"attack successful, i.e. predicted target class {args.target_class} "
           f"({100 * bd_attacked_mask.mean():.1f}%)")
 
@@ -164,17 +164,17 @@ def main():
     trusted_traces = traces_by_sample[trusted_global_filtered]
     trusted_pred_labels = predicted_labels[trusted_global_filtered]
 
-    # Test: only correct benign + successfully-attacked backdoor
+    # Test: only correct benign + successfully-attacked anomalous
     benign_global_filtered = benign_idx[benign_correct_local]
-    bd_global_filtered = backdoor_idx[bd_attacked_local]
+    bd_global_filtered = anomalous_idx[bd_attacked_local]
 
     benign_traces = traces_by_sample[benign_global_filtered]
-    backdoor_traces = traces_by_sample[bd_global_filtered]
+    anomalous_traces = traces_by_sample[bd_global_filtered]
 
-    test_traces = np.vstack([benign_traces, backdoor_traces])
+    test_traces = np.vstack([benign_traces, anomalous_traces])
     test_labels = np.concatenate([
         np.zeros(len(benign_traces)),
-        np.ones(len(backdoor_traces)),
+        np.ones(len(anomalous_traces)),
     ])
 
     n_benign = len(benign_traces)
@@ -202,7 +202,7 @@ def main():
 
     print()
     header = (f"{'Method':<16} | {'AUROC':>7} | "
-              f"{'Mean (Benign)':>15} | {'Mean (Backdoor)':>17}")
+              f"{'Mean (Benign)':>15} | {'Mean (Anomalous)':>17}")
     print(header)
     print("-" * len(header))
 

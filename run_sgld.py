@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-SGLD sampling for backdoor detection.
+SGLD sampling for anomaly detection.
 
 Loads a BackdoorBench checkpoint, runs RMSprop-SGLD via devinterp,
 and saves per-sample loss traces for downstream analysis.``
@@ -134,7 +134,7 @@ def generate_predictions(model, loader, device):
 
 def main():
     parser = argparse.ArgumentParser(
-        description="Run SGLD sampling for aLLC backdoor detection")
+        description="Run SGLD sampling for MAD anomaly detection")
     parser.add_argument("--data_dir", type=str, default="data",
                         help="Path to data/ directory")
     parser.add_argument("--output", type=str, default="loss_traces.npz",
@@ -185,7 +185,7 @@ def main():
     sampling_ds = ImageFolderDataset(data_dir / "sampling", transform)
 
     print(f"Clean test:  {len(clean_test_ds)} images")
-    print(f"BD test:     {len(bd_test_ds)} images")
+    print(f"Anomalous:   {len(bd_test_ds)} images")
     print(f"Trusted:     {len(trusted_ds)} images")
     print(f"Sampling:    {len(sampling_ds)} images")
 
@@ -220,7 +220,7 @@ def main():
     sample_indices = {
         "trusted": list(range(trusted_start, trusted_end)),
         "benign": list(range(benign_start, benign_end)),
-        "backdoor": list(range(bd_start, bd_end)),
+        "anomalous": list(range(bd_start, bd_end)),
     }
 
     print(f"\nEvaluation set: {len(all_eval_samples)} total")
@@ -320,7 +320,7 @@ def main():
         gt_labels=gt_labels,                    # [n_samples]
         trusted_idx=np.array(sample_indices["trusted"]),
         benign_idx=np.array(sample_indices["benign"]),
-        backdoor_idx=np.array(sample_indices["backdoor"]),
+        anomalous_idx=np.array(sample_indices["anomalous"]),
         n_draws=args.n_draws,
         gamma=args.gamma,
         nbeta=args.nbeta,

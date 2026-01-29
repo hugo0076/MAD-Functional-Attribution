@@ -23,7 +23,7 @@ After setup, `data/` will contain:
 data/
 ├── attack_result.pt    # BackdoorBench PreActResNet18 checkpoint
 ├── clean_test/         # Clean CIFAR-10 test images (class-folder: 0/, 1/, ..., 9/)
-├── bd_test/            # Backdoor test images (same structure)
+├── bd_test/            # Anomalous test images (same structure)
 ├── trusted/            # Trusted reference images (known-clean)
 └── sampling/           # Images used for SGLD parameter updates
 ```
@@ -51,7 +51,7 @@ python analyze.py --input loss_traces.npz
 Prints detection metrics:
 
 ```
-Method           |   AUROC | Mean (Benign)     | Mean (Backdoor)
+Method           |   AUROC | Mean (Benign)     | Mean (Anomalous)
 -----------------------------------------------------------------
 Mean Corr        |  0.XXXX |          X.XXXX   |           X.XXXX
 CLC              |  0.XXXX |          X.XXXX   |           X.XXXX
