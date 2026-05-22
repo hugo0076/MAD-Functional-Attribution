@@ -1,6 +1,6 @@
-# MAD via Functional Attribution
+# Mechanistic Anomaly Detection via Functional Attribution
 
-This repo provides an implementation for our MAD method + evaluation on BackdoorBench models and datasets.
+This repo provides an implementation for our ICML paper: [Mechanistic Anomaly Detection via Functional Attribution](https://arxiv.org/abs/2604.18970).
 
 ## Setup
 
